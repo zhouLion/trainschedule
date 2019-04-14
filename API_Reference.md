@@ -20,7 +20,7 @@
 
 验证码包含前景和背景，用户将前景拖动到背景缺失出即视为通过验证 
 
-
+以前景图的左上角为值
 
 
 **刷新验证码**
@@ -57,14 +57,31 @@
 
 
 
+
 #### 登录
 
-`Post` /account/login
+`Post` /account/login/rest
 
 | 字段名     | 类型   | 描述               |
 | ---------- | ------ | ------------------ |
 | UserName   | string | 用户名             |
 | Password   | string | 密码               |
+| VerifyCode | string | 经AES加密的x轴数值 |
+
+
+
+
+#### 注册[暂不实现前端]
+
+`Post` /account/register/rest
+
+| 字段名     | 类型   | 描述               |
+| ---------- | ------ | ------------------ |
+| UserName   | string | 用户名             |
+| Email   | string | 验证邮箱             |
+| Password   | string | 密码               |
+| ConfirmPassword   | string | 确认密码               |
+| Company   | string | 单位路径               |
 | VerifyCode | string | 经AES加密的x轴数值 |
 
 
@@ -78,13 +95,18 @@
 | 字段名   | 类型   | 描述           |
 | -------- | ------ | -------------- |
 | RealName | string | 用户真实姓名   |
-| Duties   | string | 职务（下拉框） |
+| Duties | string | 职务   |
+| Company  | string | 单位路径（下拉框） |
 | Phone    | string | 联系方式       |
 | Address  | string | 家庭住址       |
 
+
+
+
+
 #### 个人信息获取
 
-`Get` /users/userinfo
+`Get` /users/info
 
 `Reponse`
 
@@ -114,7 +136,7 @@
     ],
     "realName": "汉广",
     "userName": "serfend",
-    "avatar": "\img\",//当值为null时使用 "images\\def-male-logo.png" (def-female-logo.png)
+    "avatar": "images\\serfend.png",//当值为null时使用 "images\\def-male-logo.png" (def-female-logo.png)
     "date": "2019-03-24T18:16:16.6116118",//账号创建日期
     "gender": 0,//0男,1女,2未知
     "confirmed": false,
@@ -152,8 +174,6 @@
 申请可由任意用户发起，并交由指定上级进行审核。
 
 上级审核时，可选择`通过`，也可选择`驳回`，并可以附加审核备注。
-
-任何申请的最后一级均为`管理员`层
 
 
 
@@ -215,8 +235,9 @@ Param：{
             {
                 id:申请的id,
                 from:申请人姓名,
-                company:申请来源单位,
-                status:申请的通过状态,//0:审核中 1:通过 2:驳回
+                company:申请来源单位路径,
+                create:申请创建的时间,
+                status:申请的通过状态,//0:审核中 1:通过所有审核 2:通过，待管理员审核 4:驳回
                 remark:如果已驳回或已通过，将存在，表示备注,
                 current:当前申请所在层级
             }
@@ -247,14 +268,16 @@ Param：{
 	{
         id:申请的id,
         from:申请人姓名,
-        company:申请来源单位,
+        company:申请来源单位路径,
+        create:申请创建的时间,
         status:申请的通过状态,//0:审核中 1:通过 2:驳回
-        current:当前申请所在层级,
+        current:当前申请所在层级,        
         detail:{
             progress:[
                 {
                     company:审核单位,
-                    status:审核状态,//0:审核中 1:通过 2:驳回
+                    hdlstamp:如已处理，将显示处理时间,
+                    status:审核状态,//0:审核中 1:通过所有审核 2:通过，待管理员审核 4:驳回
                     remark:备注
                 },
                 ...
@@ -319,7 +342,7 @@ Param：{
 
 ---
 
-`post` /company/dic
+`post` /company/child
 
 | 字段名     | 类型   | 描述               |
 | ---------- | ------ | ------------------ |
