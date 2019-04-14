@@ -218,17 +218,30 @@ Param：{
 
 
 
-#### 获取所有申请
+#### 获取指定单位所有申请
 
 ---
 
-`Get`/apply/all
+`Get`/apply/fromCompany
 
 | 字段名     | 类型   | 描述               |
 | ---------- | ------ | ------------------ |
 | path   | string | 获取申请的单位路径,例如全部则为Root  |
 
+####获取指定用户所有申请
+
+---
+
+`Get` /apply/fromUser
+
+| 字段名     | 类型   | 描述               |
+| ---------- | ------ | ------------------ |
+| username   | string | 获取申请的用户名，默认为当前登录的用户  |
+
+
+
 `Response`
+
 ```json
 	{
         [
@@ -267,33 +280,35 @@ Param：{
 ```json
 	{
         id:申请的id,
-        from:申请人姓名,
+        from:申请人用户名,
+        fromUserName:申请人用户名,
         company:申请来源单位路径,
         create:申请创建的时间,
-        status:申请的通过状态,//0:审核中 1:通过 2:驳回
+        status:申请的通过状态,//0:未发布 1:已撤回 2:审核中 4:已通过，待管理员确认 8:通过 16:驳回
         current:当前申请所在层级,        
+        progress:[
+            {
+                company:审核单位的名称,
+                auditBy:处理人姓名,
+                auditUserName:处理人用户名,
+                hdlstamp:处理时间,
+                status:审核状态,//0:未接收 1:审核中 4:通过 8:驳回
+                remark:备注
+            },
+            ...
+        ],
         detail:{
-            progress:[
-                {
-                    company:审核单位,
-                    hdlstamp:如已处理，将显示处理时间,
-                    status:审核状态,//0:审核中 1:通过所有审核 2:通过，待管理员审核 4:驳回
-                    remark:备注
-                },
-                ...
-            ],
-            info:{
-            	fromid:申请人id,
-                request:{
-                    xjts:休假天数,
-                    ltts:路途天数,   
-                }
-                xjlb:休假类别,
-                stamp:{
-                    ldsj:离队时间,
-                }
+            fromid:申请人id,
+            request:{
+                xjts:休假天数,
+                ltts:路途天数,   
             }
-        }
+            xjlb:休假类别,
+            stamp:{
+            	ldsj:离队时间,
+            	gdsj:归队时间
+            }
+         }
 	}
 ```
 
