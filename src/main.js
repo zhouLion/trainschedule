@@ -3,6 +3,19 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import './registerServiceWorker'
+import Vuetify from 'vuetify'
+import zhHans from 'vuetify/es5/locale/zh-Hans'
+
+// index.js or main.js
+import './assets/css/scroll.styl' // Ensure you are using css-loader
+import 'vuetify/dist/vuetify.min.css' // Ensure you are using css-loader
+
+Vue.use(Vuetify, {
+  lang: {
+    locales: { zhHans },
+    current: 'zhHans'
+  }
+})
 
 Vue.config.productionTip = false
 
