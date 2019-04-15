@@ -84,8 +84,8 @@
           <v-flex class="flexbtn" :class="{ 'like-list-item': mini }">
             <v-icon>help_outline</v-icon>
           </v-flex>
-          <v-flex class="flexbtn" :class="{ 'like-list-item': mini }">
-            <v-icon>share</v-icon>
+          <v-flex class="flexbtn" @click="isDark = !isDark" :class="{ 'like-list-item': mini }">
+            <v-icon>{{ isDark ? 'brightness_4' : 'brightness_7' }}</v-icon>
           </v-flex>
           <v-spacer v-show="!mini"></v-spacer>
           <v-flex
@@ -104,9 +104,6 @@
         <v-icon>menu</v-icon>
       </v-btn>
       <v-spacer></v-spacer>
-      <v-btn icon @click="isDark = !isDark">
-        <v-icon>more_vert</v-icon>
-      </v-btn>
     </v-toolbar>
     <v-content>
       <v-container fluid class="pa-0">

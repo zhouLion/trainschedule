@@ -78,6 +78,11 @@ export default {
       ajaxStatus: ["success", "lock", "ready", "fail", "forbiden", "error"]
     };
   },
+  computed: {
+    dragTime() {
+      return this.endTime - this.startTime;
+    }
+  },
   props: {
     duration: {
       type: Number,
@@ -99,6 +104,8 @@ export default {
       if (this.moving == true) {
         return;
       }
+      this.startTime = new Date().getTime();
+      this.timeOut && clearTimeout(this.timeOut);
       this.moving = true;
       this.startLeft = event.x;
       // 尚无法兼容touch事件
@@ -116,19 +123,23 @@ export default {
       this.sliderLeft = x_sx + "px";
     },
     onMoveEnd() {
+      this.endTime = new Date().getTime();
       document.removeEventListener("mousemove", this.onMouseMoving);
-      this.$emit("verify", this.sliderLeft, this.verifyCallback);
+      console.log("验证参数", {
+        x: this.sliderLeft.replace("px", ""),
+        time: this.dragTime
+      });
       this.timeOut = setTimeout(() => {
-        this.verifyCallback(false, "请求超时");
+        let num = 10 * Math.random();
+        let flag = parseInt(num) % 2 == 0;
+        this.verifyCallback(flag, "请求超时");
       }, 3000);
     },
     verifyCallback(flag, msg) {
       this.moving = false;
       // 清空定时器
       this.timeOut && clearTimeout(this.timeOut);
-      if (msg) {
-        console.log(msg);
-      }
+      this.$emit("verify", flag);
       this.sliderLeft = 0;
       document.removeEventListener("mouseup", this.onMoveEnd);
     }

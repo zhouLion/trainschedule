@@ -38,6 +38,7 @@
                       :duration="2000"
                       fg="img/verify/verify-ft.png"
                       bg="img/verify/verify-bg.png"
+                      @verify="verify"
                     />
                   </v-input>
                 </v-form>
@@ -52,6 +53,12 @@
         </v-layout>
       </v-container>
     </v-content>
+    <v-snackbar v-model="snack.show">
+      {{ snack.msg }}
+      <v-btn flat color="primary" @click.native="snack.show = false"
+        >关闭</v-btn
+      >
+    </v-snackbar>
   </v-app>
 </template>
 
@@ -66,14 +73,30 @@ export default {
     model: {
       username: "sumingyu@isok.com",
       password: "password"
+    },
+    snack: {
+      show: false,
+      msg: "信息"
     }
   }),
   methods: {
     login() {
       this.loading = true;
       setTimeout(() => {
+        this.snack.msg = "登录成功";
+        this.snack.show = true;
         this.$router.push("/dashboard");
       }, 1000);
+    },
+    verify(flag) {
+      if (flag == true) {
+        this.snack.msg = "验证成功，等待登录";
+        this.snack.show = true;
+        this.login();
+      } else {
+        this.snack.msg = "验证失败";
+        this.snack.show = true;
+      }
     }
   }
 };
