@@ -1,8 +1,9 @@
 import axios from 'axios'
 import qs from 'qs'
+import config from '../app.config'
 // create an axios instance
 const service = axios.create({
-  baseURL: 'https://localhost:44310/', // api 的 base_url
+  baseURL: config.baseUrl, // api 的 base_url
   withCredentials: true, // 跨域请求时发送 cookies
   timeout: 5000, // request timeout
   headers: {
