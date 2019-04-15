@@ -5,27 +5,63 @@ let Get = request.get
 
 export default {
   /**
-   * 
-   * @param {*} param0 
+   * 获取所有的申请
    */
-  getAuth(path) {
-    return Get("apply/auth", {
-      data: {
-        path
-      }
-    })
+  getAllApply: () => {
+    return Get("apply/all");
   },
-  getApply(id) {
+
+  /**
+   * 获取申请详情
+   * @param {*} id 
+   */
+  getApply: id => {
     return Get("apply/apply", {
       data: {
         id
       }
-    })
+    });
   },
-  postAuth(param) {
-    return Post("apply/auth", {
-      Param: param
+
+  getApplyDetail: ({ id }) => {
+    return Get("apply/detail", {
+      id
     })
   },
 
+  /**
+   * 获取指定单位所有申请
+   */
+  getApplyFromCompany: ({
+    path
+  }) => {
+    return Get("apply/fromCompany", {
+      data: {
+        path
+      }
+    });
+  },
+
+  /**
+   * 获取指定用户所有申请
+   */
+  getApplyFromUser: ({
+    username
+  }) => {
+    return Get("apply/fromUser", {
+      data: {
+        username
+      }
+    });
+  },
+
+  /**
+   * 设置权限
+   * @param {*} param 
+   */
+  postAuth: param => {
+    return Post("apply/auth", {
+      Param: param
+    });
+  }
 }
