@@ -5,6 +5,7 @@ import store from './store'
 import './registerServiceWorker'
 import Vuetify from 'vuetify'
 import zhHans from 'vuetify/es5/locale/zh-Hans'
+import Message from 'vue-m-message'
 
 // index.js or main.js
 import './assets/css/scroll.styl' // Ensure you are using css-loader
@@ -17,6 +18,9 @@ Vue.use(Vuetify, {
   }
 })
 
+Vue.use(Message, {
+  name: "Message"
+})
 Vue.config.productionTip = false
 
 new Vue({

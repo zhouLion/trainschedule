@@ -83,19 +83,28 @@ export default {
     login() {
       this.loading = true;
       setTimeout(() => {
-        this.snack.msg = "登录成功";
-        this.snack.show = true;
-        this.$router.push("/dashboard");
+        this.$Message({
+          message: "登录成功",
+          type: "success",
+          duration: 1 * 1000
+        });
+        this.$router.push("/addapplication");
       }, 1000);
     },
     verify(flag) {
       if (flag == true) {
-        this.snack.msg = "验证成功，等待登录";
-        this.snack.show = true;
+        this.$Message({
+          message: "验证成功，等待登录",
+          type: "success",
+          duration: 1 * 1000
+        });
         this.login();
       } else {
-        this.snack.msg = "验证失败";
-        this.snack.show = true;
+        this.$Message({
+          message: "验证失败",
+          type: "error",
+          duration: 1 * 1000
+        });
       }
     }
   }

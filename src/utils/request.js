@@ -1,14 +1,17 @@
 import axios from 'axios'
 import qs from 'qs'
+import config from "../app.config"
+
+const { baseUrl } = config;
 // create an axios instance
 const service = axios.create({
-  baseURL: 'https://localhost:44310/', // api 的 base_url
+  baseURL: baseUrl, // api 的 base_url
   withCredentials: true, // 跨域请求时发送 cookies
   timeout: 5000, // request timeout
   headers: {
     'Content-Type': 'application/x-www-form-urlencoded'
   },
-  transformRequest: [function(data) {
+  transformRequest: [function (data) {
     data = qs.stringify(data)
     return data
   }]
@@ -40,13 +43,12 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
-    if (res.code !== 0) {
+    if (res.status !== 0) {
       this.$Message({
         message: res.message,
         type: 'error',
         duration: 5 * 1000
       })
-
       return Promise.reject('error')
     } else {
       return response.data
