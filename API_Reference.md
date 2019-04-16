@@ -189,6 +189,7 @@
 | ---------- | ------ | ------------------ |
 | Param   | json | 包含提交申请实体的提交数据             |
 | VerifyCode | string | 经AES加密的x轴数值 |
+| NotStart | bool | 当值为true时，将不会自动开始审核流程 |
 
 ```json
 Param：{
@@ -212,7 +213,13 @@ Param：{
 
 
 
-
+####开始审核流程
+---
+当`apply/Submit`的`NotStart`选项为`true`时，需要调用此过程手动开始审核流程
+`Post` /apply/StartAudit
+| 字段名     | 类型   | 描述               |
+| ---------- | ------ | ------------------ |
+| id   | string | 申请的id  |
 
 
 
