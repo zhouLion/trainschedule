@@ -213,7 +213,8 @@ Param：{
 
 
 
-####开始审核流程
+#####开始审核流程
+
 ---
 当`apply/Submit`的`NotStart`选项为`true`时，需要调用此过程手动开始审核流程
 `Post` /apply/StartAudit
@@ -223,35 +224,14 @@ Param：{
 
 
 
-
-
-#### 获取指定单位所有申请
-
----
-
-`Get`/apply/fromCompany
-
-| 字段名     | 类型   | 描述               |
-| ---------- | ------ | ------------------ |
-| path   | string | 获取申请的单位路径,例如全部则为Root  |
-
-####获取指定用户所有申请
-
----
-
-`Get` /apply/fromUser
-
-| 字段名     | 类型   | 描述               |
-| ---------- | ------ | ------------------ |
-| username   | string | 获取申请的用户名，默认为当前登录的用户  |
-
+####获取申请
 
 
 `Response`
 
 ```json
 	{
-        [
+        applies:[
             {
                 id:申请的id,
                 from:申请人姓名,
@@ -268,6 +248,40 @@ Param：{
 
 
 
+##### 获取指定单位所有申请
+
+---
+
+获取所有已经到达指定单位申请，但不会获取此单位下级单位的申请。
+
+对于用户，应使用它的`PermissionCompanies`去匹配所有可审核单位
+
+`Get`/apply/FromCompany
+
+| 字段名     | 类型   | 描述               |
+| ---------- | ------ | ------------------ |
+| path   | string | 获取申请的单位路径,默认为当前用户所在单位 |
+| page   | int | 获取哪一页页面，默认为0 |
+| pageSize   | int | 单个页面的项数量，默认为10 |
+
+
+##### 获取指定用户所有申请
+
+---
+
+获取指定用户提交的所有申请
+
+`Get` /apply/FromUser
+
+| 字段名     | 类型   | 描述               |
+| ---------- | ------ | ------------------ |
+| username   | string | 获取申请的用户名，默认为当前登录的用户  |
+| page   | int | 获取哪一页页面，默认为0 |
+| pageSize   | int | 单个页面的项数量，默认为10 |
+
+
+
+
 
 
 
@@ -278,7 +292,8 @@ Param：{
 
 ---
 
-`Get`/apply/detail
+`Get`/apply/Detail
+
 | 字段名     | 类型   | 描述               |
 | ---------- | ------ | ------------------ |
 | id   | string | 申请的id  |
@@ -286,36 +301,38 @@ Param：{
 `Response`
 ```json
 	{
-        id:申请的id,
-        from:申请人用户名,
-        fromUserName:申请人用户名,
-        company:申请来源单位路径,
-        create:申请创建的时间,
-        status:申请的通过状态,//0:未发布 1:已撤回 2:审核中 4:已通过，待管理员确认 8:通过 16:驳回
-        current:当前申请所在层级,        
-        progress:[
-            {
-                company:审核单位的名称,
-                auditBy:处理人姓名,
-                auditUserName:处理人用户名,
-                hdlstamp:处理时间,
-                status:审核状态,//0:未接收 1:审核中 4:通过 8:驳回
-                remark:备注
-            },
-            ...
-        ],
-        detail:{
-            fromid:申请人id,
-            request:{
-                xjts:休假天数,
-                ltts:路途天数,   
-            }
-            xjlb:休假类别,
-            stamp:{
-            	ldsj:离队时间,
-            	gdsj:归队时间
-            }
-         }
+        data:{
+            id:申请的id,
+            from:申请人用户名,
+            fromUserName:申请人用户名,
+            company:申请来源单位路径,
+            create:申请创建的时间,
+            status:申请的通过状态,//0:未发布 1:已撤回 2:审核中 4:已通过，待管理员确认 8:通过 16:驳回
+            current:当前申请所在层级,        
+            progress:[
+                {
+                    company:审核单位的名称,
+                    auditBy:处理人姓名,
+                    auditUserName:处理人用户名,
+                    hdlstamp:处理时间,
+                    status:审核状态,//0:未接收 1:审核中 4:通过 8:驳回
+                    remark:备注
+                },
+                ...
+            ],
+            detail:{
+                fromId:申请人id,
+                request:{
+                    xjts:休假天数,
+                    ltts:路途天数,   
+                }
+                xjlb:休假类别,
+                stamp:{
+                    ldsj:离队时间,
+                    gdsj:归队时间
+                }
+             }
+        }
 	}
 ```
 
