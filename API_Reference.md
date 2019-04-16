@@ -83,6 +83,7 @@
 | ConfirmPassword   | string | 确认密码               |
 | Company   | string | 单位路径               |
 | VerifyCode | string | 经AES加密的x轴数值 |
+|AuthCode|string|授权码，经有权限的账号为Key，使用GoogleAuth授权|
 
 
 
