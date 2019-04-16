@@ -12,6 +12,8 @@
 
 
 
+
+
 ### 验证码
 
 对于任何引用到`VerifyCode`字段的请求，均表示需要验证码
@@ -42,12 +44,7 @@
 
 
 
-
-
-
-###用户
-
----
+###账号操作
 
 应向审核人员展示被审核人员的基础信息，包括以下字段：
 
@@ -85,8 +82,46 @@
 | VerifyCode | string | 经AES加密的x轴数值 |
 |AuthCode|json|授权码，经有权限的账号为Key，使用GoogleAuth授权 {AuthUserName:string[用于授权的账号],AuthCode:string[授权账号的当前GoogleAuth授权码]}|
 
+#### 授权、查权与剥权[暂不实现前端]
+使用更高权限的账户为无目标权限的账户进行授权
+例如，拥有`Root/北京分部`权限的用户A，可授权任意在此权限下的 `Root/北京分部/*/*/..`权限，而不能授权`Root/武汉分部`。
+
+#####授权
+`Post` /account/permission/rest
+| 字段名     | 类型   | 描述               |
+| ---------- | ------ | ------------------ |
+| UserName   | string | 授权目标             |
+| Path   | string | 权限路径             |
+|AuthCode|json|授权码，经有权限的账号为Key，使用GoogleAuth授权 {AuthUserName:string[用于授权的账号],AuthCode:string[授权账号的当前GoogleAuth授权码]}|
+`Response` 权限id
+
+#####查权
+`Get` /account/permission/rest
+| 字段名     | 类型   | 描述               |
+| ---------- | ------ | ------------------ |
+| UserName   | string | 目标用户             |
+`Response` 
+```Json
+{
+    [
+        id:权限的id,
+        path:权限路径,
+        authBy:授权人
+    ]
+}
+```
+
+#####剥权
+`Delete` /account/permission/rest
+| 字段名     | 类型   | 描述               |
+| ---------- | ------ | ------------------ |
+| id   | string | 权限的id             |
+|AuthCode|json|授权码，经有权限的账号为Key，使用GoogleAuth授权 {AuthUserName:string[用于授权的账号],AuthCode:string[授权账号的当前GoogleAuth授权码]}|
 
 
+###用户
+
+---
 
 
 #### 个人信息设置
@@ -358,12 +393,15 @@ Param：{
         {
             id:申请id,
             apply:申请状态号,//0:通过 1:不通过 ...
-            remark:备注
+            remark:备注,
+            auditAs:审核人使用的单位路径,//以此确认当前使用何单位的审批权限进行审批
         },
         ...
     ]
 }
 ```
+
+`
 
 
 
