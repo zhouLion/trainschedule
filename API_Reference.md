@@ -426,6 +426,7 @@ Param：{
 | 字段名     | 类型   | 描述               |
 | ---------- | ------ | ------------------ |
 | path   | string | 需要获取的单位路径             |
+| showPrivate   | string | 如需要显示隐藏单位，输入管理员授权码             |
 
 `Response`
 ```json
@@ -465,5 +466,8 @@ Param：{
 | ---------- | ------ | ------------------ |
 | Name   | string | 新单位名称             |
 | ParentPath   | string | 单位的父路径             |
-
+| IsPrivate   | bool | 是否隐藏单位             |
 `Response` `string` id 单位的id
+
+
+
