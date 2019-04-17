@@ -13,7 +13,7 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     console.log(config.headers['Content-Type'])
-    if (config.headers['Content-Type'] === 'application/urlencoded') {
+    if (config.headers['Content-Type'] === 'application/json') {
       config.data = qs.stringify(config.data)
     }
     return config
