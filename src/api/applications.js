@@ -45,14 +45,8 @@ export default {
   /**
    * 获取指定用户所有申请
    */
-  getApplyFromUser: ({
-    username
-  }) => {
-    return Get("apply/fromUser", {
-      data: {
-        username
-      }
-    });
+  getApplyFromUser: () => {
+    return Get("apply/fromUser");
   },
 
   /**

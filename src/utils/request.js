@@ -6,14 +6,14 @@ import $Message from 'vue-m-message'
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // api 的 base_url
   withCredentials: true, // 跨域请求时发送 cookies
+  crossDomain: true,
   timeout: 5000 // request timeout
 })
 
 // request interceptor
 service.interceptors.request.use(
   config => {
-    console.log(config.headers['Content-Type'])
-    if (config.headers['Content-Type'].includes('form-urlencoded') ) {
+    if (!config.headers['Content-Type'] || config.headers['Content-Type'].includes('form-urlencoded')) {
       config.data = qs.stringify(config.data)
     }
     return config
@@ -39,7 +39,7 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
-    if (res.code !== 0) {
+    if (res.status !== 0) {
       $Message({
         message: res.message,
         type: 'error',
