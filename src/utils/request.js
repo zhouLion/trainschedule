@@ -1,23 +1,19 @@
 import axios from 'axios'
 import qs from 'qs'
-import config from '../app.config'
 // create an axios instance
 const service = axios.create({
-  baseURL: config.baseUrl, // api 的 base_url
+  baseURL: process.env.VUE_APP_BASE_API, // api 的 base_url
   withCredentials: true, // 跨域请求时发送 cookies
-  timeout: 5000, // request timeout
-  headers: {
-    'Content-Type': 'application/x-www-form-urlencoded'
-  },
-  transformRequest: [function (data) {
-    data = qs.stringify(data)
-    return data
-  }]
+  timeout: 5000 // request timeout
 })
 
 // request interceptor
 service.interceptors.request.use(
   config => {
+    console.log(config.headers['Content-Type'])
+    if (config.headers['Content-Type'] === 'application/urlencoded') {
+      config.data = qs.stringify(config.data)
+    }
     return config
   },
   error => {
@@ -32,7 +28,7 @@ service.interceptors.response.use(
   /**
    * If you want to get information such as headers or status
    * Please return  response => response
-  */
+   */
   /**
    * 下面的注释为通过在response里，自定义code来标示请求状态
    * 当code返回如下情况则说明权限有问题，登出并返回到登录页
@@ -41,12 +37,13 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
-    if (res.status !== 0) {
+    if (res.code !== 0) {
       this.$Message({
         message: res.message,
         type: 'error',
         duration: 5 * 1000
       })
+
       return Promise.reject('error')
     } else {
       return response.data
