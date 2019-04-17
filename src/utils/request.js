@@ -1,5 +1,7 @@
 import axios from 'axios'
 import qs from 'qs'
+import $Message from 'vue-m-message'
+
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // api 的 base_url
@@ -38,12 +40,11 @@ service.interceptors.response.use(
   response => {
     const res = response.data
     if (res.code !== 0) {
-      this.$Message({
+      $Message({
         message: res.message,
         type: 'error',
         duration: 5 * 1000
       })
-
       return Promise.reject('error')
     } else {
       return response.data
@@ -51,7 +52,7 @@ service.interceptors.response.use(
   },
   error => {
     console.log(error) // for debug
-    this.$Message({
+    $Message({
       message: error.message,
       type: 'error',
       duration: 5 * 1000
