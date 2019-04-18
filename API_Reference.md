@@ -63,7 +63,7 @@
 | ---------- | ------ | ------------------ |
 | UserName   | string | 用户名             |
 | Password   | string | 密码               |
-| VerifyCode | string | 经AES加密的x轴数值 |
+| VerifyCode | string | x轴数值 |
 
 
 
@@ -72,31 +72,64 @@
 
 `Post` /account/register/rest
 
+{
+    UserName[string]:用户名,
+    Email[string]:验证邮箱,
+    Password[string]:密码,
+    ConfirmPassword[string]:确认密码,
+    Company[string]:单位路径,
+    VerifyCode[string]:x轴数值,
+    auth:{//授权码，经有权限的账号为Key，使用GoogleAuth授权 
+        AuthUserName[string]:用于授权的账号,
+        AuthCode[string]:授权账号的当前GoogleAuth授权码
+    }
+}
+
+
+
+#### 授权码[暂不实现前端]
+
+##### 设置授权码
+首次设置授权码时，将使用用户的用户名作为授权码，应提醒用户及时修改
+`Post` /account/AuthKey/rest
+
 | 字段名     | 类型   | 描述               |
 | ---------- | ------ | ------------------ |
-| UserName   | string | 用户名             |
-| Email   | string | 验证邮箱             |
-| Password   | string | 密码               |
-| ConfirmPassword   | string | 确认密码               |
-| Company   | string | 单位路径               |
-| VerifyCode | string | 经AES加密的x轴数值 |
-|AuthCode|json|授权码，经有权限的账号为Key，使用GoogleAuth授权 {AuthUserName:string[用于授权的账号],AuthCode:string[授权账号的当前GoogleAuth授权码]}|
+| NewKey | string | 新授权码 |
+| UserName |  string | 用于授权的账号|
+| Code | string | 授权账号的当前GoogleAuth授权码|
+
+##### 查看授权码
+`Get` /account/AuthKey/rest
+`Response` 授权二维码，用户使用谷歌授权App扫码添加令牌
+
+
+
+
 
 #### 授权、查权与剥权[暂不实现前端]
+
 使用更高权限的账户为无目标权限的账户进行授权
 例如，拥有`Root/北京分部`权限的用户A，可授权任意在此权限下的 `Root/北京分部/*/*/..`权限，而不能授权`Root/武汉分部`。
 
 #####授权
 `Post` /account/permission/rest
+
 | 字段名     | 类型   | 描述               |
 | ---------- | ------ | ------------------ |
-| UserName   | string | 授权目标             |
-| Path   | string | 权限路径             |
-|AuthCode|json|授权码，经有权限的账号为Key，使用GoogleAuth授权 {AuthUserName:string[用于授权的账号],AuthCode:string[授权账号的当前GoogleAuth授权码]}|
+|  UserName|string|授权目标|
+| Path | string | 权限路径 |
+| UserName |  string | 用于授权的账号|
+| Code | string | 授权账号的当前GoogleAuth授权码|
+
+
 `Response` 权限id
 
 #####查权
-`Get` /account/permission/rest
+- 高优先级用户可查询低优先级用户的权限
+- 可查询用户自身的权限
+  `Get` /account/permission/rest
+
 | 字段名     | 类型   | 描述               |
 | ---------- | ------ | ------------------ |
 | UserName   | string | 目标用户             |
@@ -112,6 +145,8 @@
 ```
 
 #####剥权
+- 授权人可剥权被授权人权限
+- 高优先级用户可剥权低优先级用户
 `Delete` /account/permission/rest
 | 字段名     | 类型   | 描述               |
 | ---------- | ------ | ------------------ |
