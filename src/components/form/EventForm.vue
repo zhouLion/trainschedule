@@ -14,17 +14,32 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="showSaveDialog" persistent :max-width="290">
+    <v-dialog v-model="showSaveDialog" persistent :max-width="365">
       <v-card>
-        <v-card-title class="headline">申请信息确认</v-card-title>
-        <v-card-text>text</v-card-text>
-        <v-card-actions>
+        <v-card-title class="subheading px-3 py-1">
+          申请信息确认
           <v-spacer></v-spacer>
-          <v-btn color="primary" flat @click.native="send">提交</v-btn>
-          <v-btn color="primary" flat @click.native="showSaveDialog = false"
-            >修改</v-btn
+          <v-btn
+            flat
+            icon
+            small
+            color="error"
+            @click.native="showSaveDialog = false"
           >
-        </v-card-actions>
+            <v-icon>clear</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <v-subheader>验证成功即可提交</v-subheader>
+          <v-input>
+            <SliderVerify
+              :duration="2000"
+              fg="img/verify/verify-ft.png"
+              bg="img/verify/verify-bg.png"
+              @verify="verify"
+            />
+          </v-input>
+        </v-card-text>
       </v-card>
     </v-dialog>
 
@@ -241,6 +256,8 @@
 </template>
 
 <script>
+import SliderVerify from "../plugin/SliderVerify/index";
+
 export default {
   data: () => ({
     date: null,
@@ -271,6 +288,9 @@ export default {
     title: null,
     valid: true
   }),
+  components: {
+    SliderVerify
+  },
   computed: {
     labelHoliday() {
       let { xjlb } = this.params;
@@ -285,6 +305,17 @@ export default {
       this.$router.push({
         name: "myApplication"
       });
+    },
+    verify(flag, msg) {
+      if (flag) {
+        this.send();
+      } else {
+        this.$Message({
+          message: "验证失败",
+          type: "error",
+          duration: 3 * 1000
+        });
+      }
     },
     send() {
       this.dialog.show = true;

@@ -84,8 +84,12 @@
           <v-flex class="flexbtn" :class="{ 'like-list-item': mini }">
             <v-icon>help_outline</v-icon>
           </v-flex>
-          <v-flex class="flexbtn" @click="isDark = !isDark" :class="{ 'like-list-item': mini }">
-            <v-icon>{{ isDark ? 'brightness_4' : 'brightness_7' }}</v-icon>
+          <v-flex
+            class="flexbtn"
+            @click="isDark = !isDark"
+            :class="{ 'like-list-item': mini }"
+          >
+            <v-icon>{{ isDark ? "brightness_4" : "brightness_7" }}</v-icon>
           </v-flex>
           <v-spacer v-show="!mini"></v-spacer>
           <v-flex
@@ -120,7 +124,7 @@
 export default {
   data() {
     return {
-      navWidth: 356,
+      navWidth: 320,
       drawer: null,
       onMove: false,
       localeCN: true,
@@ -158,7 +162,7 @@ export default {
     },
     endMove(event) {
       this.onMove = false;
-      let navWidth = event.screenX < 356 ? 356 : event.screenX;
+      let navWidth = event.screenX < 320 ? 320 : event.screenX;
       navWidth = event.screenX > 408 ? 408 : navWidth;
       this.navWidth = navWidth;
       document.removeEventListener("mouseup", this.endMove);

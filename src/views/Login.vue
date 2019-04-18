@@ -7,12 +7,6 @@
             <v-card class="elevation-1 pa-3">
               <v-card-text>
                 <div class="layout column align-center">
-                  <!-- <img
-                    src="/static/m.png"
-                    alt="干部休假登记审核系统"
-                    width="120"
-                    height="120"
-                  /> -->
                   <h1 class="flex my-4 primary--text">
                     干部休假登记审核系统
                   </h1>
@@ -23,7 +17,7 @@
                     name="login"
                     label="账号"
                     type="text"
-                    v-model="model.username"
+                    v-model="model.UserName"
                   ></v-text-field>
                   <v-text-field
                     append-icon="lock"
@@ -31,7 +25,7 @@
                     label="密码"
                     id="password"
                     type="password"
-                    v-model="model.password"
+                    v-model="model.Password"
                   ></v-text-field>
                   <v-input>
                     <SliderVerify
@@ -64,6 +58,7 @@
 
 <script>
 import SliderVerify from "../components/plugin/SliderVerify/index.vue";
+import account from "../api/account";
 export default {
   components: {
     SliderVerify
@@ -71,8 +66,8 @@ export default {
   data: () => ({
     loading: false,
     model: {
-      username: "sumingyu@isok.com",
-      password: "password"
+      UserName: "11111111",
+      Password: "11111111"
     },
     snack: {
       show: false,
@@ -82,14 +77,22 @@ export default {
   methods: {
     login() {
       this.loading = true;
-      setTimeout(() => {
-        this.$Message({
-          message: "登录成功",
-          type: "success",
-          duration: 1 * 1000
+      let { UserName, Password } = this.model;
+      account
+        .loginRest({
+          UserName,
+          Password,
+          Verify: "201700816"
+        })
+        .then(res => {
+          console.log(res);
+          this.$Message({
+            message: "登录成功",
+            type: "success",
+            duration: 1 * 1000
+          });
+          this.$router.push("/addapplication");
         });
-        this.$router.push("/addapplication");
-      }, 1000);
     },
     verify(flag) {
       if (flag == true) {
