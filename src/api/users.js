@@ -20,5 +20,5 @@ export default {
     return Post({
       RealName, Duties, Company, Phone, Address
     })
-  }
+  },
 }

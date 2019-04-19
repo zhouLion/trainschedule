@@ -1,17 +1,34 @@
 <template>
   <div class="slider-verify">
     <div class="sv_holder sv_float" style="touch-action: none;">
-      <div class="sv_widget sv_clean" :class="moving ? 'sv_show' : 'sv_hide'">
+      <div
+        class="sv_widget sv_clean"
+        :class="isShowCard ? 'sv_show' : 'sv_hide'"
+      >
         <div class="sv_holder_top"></div>
-        <div class="sv_box_holder" style="height: 116px;">
+        <div class="sv_box_holder">
           <div class="sv_box">
             <div class="sv_loading">
-              <div class="sv_loading_icon"></div>
-              <div class="sv_loading_text">加载中...</div>
+              <div class="sv_bg" v-show="fturl">
+                <img :src="bgurl" class="sv_cut_bg" width="100%" alt="" />
+                <img
+                  :src="fturl"
+                  class="sv_slice"
+                  width="43px"
+                  :style="{
+                    backgroundImage: 'url(' + fturl + ')',
+                    top: posY + 'px',
+                    left: sliderLeft,
+                    zIndex: 2
+                  }"
+                />
+              </div>
+              <div class="sv_loading_icon" v-show="!fturl"></div>
+              <div class="sv_loading_text" v-show="!fturl">加载中...</div>
             </div>
-            <a
+            <!-- <a
               class="sv_curtain"
-              :class="moving ? 'sv_show' : 'sv_hide'"
+              :class="isShowCard ? 'sv_show' : 'sv_hide'"
               style="background-image: none;"
             >
               <div class="sv_curtain_bg_wrap">
@@ -21,12 +38,13 @@
               </div>
               <div
                 class="sv_curtain_button"
-                :class="moving ? 'sv_show' : 'sv_hide'"
+                :class="isShowCard ? 'sv_show' : 'sv_hide'"
               ></div>
-            </a>
-            <a class="sv_box_tips" style="display: none;"></a>
+            </a> -->
+            <!-- <a class="sv_box_tips" style="display: none;"></a> -->
           </div>
-          <div class="sv_info" :class="moving ? 'sv_show' : 'sv_hide'">
+          <!-- :class="isShowCard ? 'sv_show' : 'sv_hide'" -->
+          <div class="sv_info sv_hide">
             <div class="sv_info_tip sv_fail">
               <div class="sv_info_icon"></div>
               <div class="sv_info_text">
@@ -36,23 +54,32 @@
             </div>
           </div>
         </div>
-        <div class="sv_bottom">
-          <a class="sv_refresh_button">
-            <div class="sv_refresh_tips">刷新验证</div>
-          </a>
-          <a class="sv_help_button" href="" target="_blank">
-            <div class="sv_help_tips">帮助反馈</div>
-          </a>
-          <a class="sv_logo_button sv_no_logo"></a>
+        <div class="sv_bottom" @click="refreshVerify">
+          <v-layout row wrap>
+            <a class="sv_refresh_button" @click="refreshVerify">
+              <div class="sv_refresh_tips">刷新验证</div>
+            </a>
+            <v-spacer></v-spacer>
+            <v-icon
+              @click="
+                () => {
+                  showcard = false;
+                  moving = false;
+                }
+              "
+              >clear</v-icon
+            >
+          </v-layout>
         </div>
       </div>
       <div class="sv_slider" ref="sv_slider">
-        <div class="sv_guide_tip" :class="moving ? 'sv_hide' : 'sv_show'">
+        <div class="sv_guide_tip">
           按住左边滑块，拖动完成上方拼图
         </div>
         <div
           class="sv_slider_knob sv_show"
           :class="{ sv_moving: moving }"
+          @mouseover="onMoveOver"
           @mousedown="onMoveSlider"
           :style="{ left: sliderLeft }"
         ></div>
@@ -67,20 +94,30 @@
 </template>
 
 <script>
+import verify from "../../../api/static";
 export default {
   name: "",
   data() {
     return {
       moving: false,
+      onRefreshVerify: false,
+      refreshVerifyTime: new Date().getTime(),
       startLeft: 0,
       sliderLeft: 0,
       timeOut: null,
+      bgurl: "",
+      fturl: "",
+      posY: 0,
+      showcard: false,
       ajaxStatus: ["success", "lock", "ready", "fail", "forbiden", "error"]
     };
   },
   computed: {
     dragTime() {
       return this.endTime - this.startTime;
+    },
+    isShowCard() {
+      return this.showcard || this.moving;
     }
   },
   props: {
@@ -99,7 +136,16 @@ export default {
       default: "img/verify/verify-fg.png"
     }
   },
+  destroyed() {
+    this.timeOut && clearTimeout(this.timeOut);
+  },
+  mounted() {
+    this.refreshVerify(true);
+  },
   methods: {
+    onMoveOver() {
+      this.showcard = true;
+    },
     onMoveSlider(event) {
       if (this.moving == true) {
         return;
@@ -125,23 +171,54 @@ export default {
     onMoveEnd() {
       this.endTime = new Date().getTime();
       document.removeEventListener("mousemove", this.onMouseMoving);
-      console.log("验证参数", {
-        x: this.sliderLeft.replace("px", ""),
-        time: this.dragTime
-      });
-      this.timeOut = setTimeout(() => {
-        let num = 10 * Math.random();
-        let flag = parseInt(num) % 2 == 0;
-        this.verifyCallback(flag, "请求超时");
-      }, 3000);
+
+      this.verifyCallback(true);
+      // this.timeOut = setTimeout(() => {
+      //   let num = 10 * Math.random();
+      //   let flag = parseInt(num) % 2 == 0;
+      //   this.verifyCallback(flag, "请求超时");
+      // }, 3000);
     },
     verifyCallback(flag, msg) {
       this.moving = false;
+      this.showcard = false;
       // 清空定时器
       this.timeOut && clearTimeout(this.timeOut);
       this.$emit("verify", flag);
       this.sliderLeft = 0;
       document.removeEventListener("mouseup", this.onMoveEnd);
+    },
+    /**
+     * 刷新验证码
+     * @param {Boolean?} force
+     */
+    async refreshVerify(force = false) {
+      let curTime = new Date().getTime();
+      if (!force) {
+        if (this.onRefreshVerify == true) {
+          return false;
+        }
+        if (curTime - this.refreshVerifyTime < 2000) {
+          this.$Message({
+            type: "warning",
+            message: "刷新太频繁",
+            duration: 1000
+          });
+          return false;
+        }
+      } else {
+        this.refreshVerifyTime = curTime;
+        this.onRefreshVerify = false;
+        let result = await verify.refreshVerify();
+        let bg = "https://trainschdule.mynatapp.cc/static/verify-bg.png";
+        let ft = "https://trainschdule.mynatapp.cc/static/verify-ft.png";
+        console.log(result);
+        let { id, posY } = result;
+        this.bgurl = bg + "?id=" + id;
+        this.fturl = ft + "?id=" + id;
+        this.posY = posY;
+        return result;
+      }
     }
   }
 };
@@ -149,4 +226,8 @@ export default {
 
 <style lang="stylus" scoped>
 @import url('./index.css');
+
+.bg-round {
+  background-repeat: round;
+}
 </style>

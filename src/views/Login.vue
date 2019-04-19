@@ -59,6 +59,8 @@
 <script>
 import SliderVerify from "../components/plugin/SliderVerify/index.vue";
 import account from "../api/account";
+import users from "../api/users";
+
 export default {
   components: {
     SliderVerify
@@ -75,25 +77,28 @@ export default {
     }
   }),
   methods: {
-    login() {
+    // 执行登录
+    async login() {
       this.loading = true;
       let { UserName, Password } = this.model;
-      account
-        .loginRest({
-          UserName,
-          Password,
-          Verify: "201700816"
-        })
-        .then(res => {
-          console.log(res);
-          this.$Message({
-            message: "登录成功",
-            type: "success",
-            duration: 1 * 1000
-          });
-          this.$router.push("/addapplication");
-        });
+      await account.loginRest({
+        UserName,
+        Password,
+        Verify: "201700816"
+      });
+
+      // let userInfo = await users.getUserInfo();
+      this.$store.dispatch("Users/userGetInfo");
+      // console.log(userInfo);
+      this.$Message({
+        message: "登录成功",
+        type: "success",
+        duration: 1 * 1000
+      });
+      this.$router.push("/addapplication");
     },
+
+    // 验证
     verify(flag) {
       if (flag == true) {
         this.$Message({

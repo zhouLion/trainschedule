@@ -19,11 +19,11 @@ export default {
   /**
     ### 登录
     | 字段名     | 类型   | 描述               |
-    | ---------- | ------ | ------------------ |
+    | ---------- | ------ | ------------------|
     | UserName   | string | 用户名             |
     | Password   | string | 密码               |
     | Verify | string | 经AES加密的x轴数值 |
-   * @param {*} param0 
+   * @param {{ UserName:string, Password:string, Verify:string }} param0 
    */
   loginRest({ UserName, Password, Verify }) {
     // let formdata = new FormData();

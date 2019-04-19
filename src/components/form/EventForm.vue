@@ -31,6 +31,12 @@
         </v-card-title>
         <v-card-text>
           <v-subheader>验证成功即可提交</v-subheader>
+          <v-subheader>验证成功即可提交</v-subheader>
+          <v-subheader>验证成功即可提交</v-subheader>
+          <v-subheader>验证成功即可提交</v-subheader>
+          <v-subheader>验证成功即可提交</v-subheader>
+          <v-subheader>验证成功即可提交</v-subheader>
+          <v-subheader>验证成功即可提交</v-subheader>
           <v-input>
             <SliderVerify
               :duration="2000"
