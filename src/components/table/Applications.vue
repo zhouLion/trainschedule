@@ -39,6 +39,10 @@
             v-model="selected"
             :loading="loading"
             select-all
+            hide-actions
+            :pagination="{
+              rowsPerPage: -1
+            }"
             item-key="id"
             class="elevation-0"
           >
@@ -115,6 +119,10 @@
           content-tag="v-layout"
           row
           wrap
+          hide-actions
+          :pagination="{
+            rowsPerPage: -1
+          }"
           :loading="loading"
         >
           <template v-slot:item="props">
@@ -159,6 +167,7 @@
                         <v-tooltip bottom>
                           <v-btn
                             slot="activator"
+                            @click="showDetail(props)"
                             flat
                             icon
                             color="primary"
@@ -190,6 +199,13 @@
           </template>
         </v-data-iterator>
       </v-container>
+    </v-card-text>
+    <v-card-text>
+      <div class="text-xs-center pt-2">
+        <v-btn block color="primary" dark :loading="loading" @click="loadMore"
+          >加载更多</v-btn
+        >
+      </div>
     </v-card-text>
     <v-navigation-drawer
       :width="356"
@@ -246,6 +262,7 @@
 
 
 <script>
+import applications from "../../api/applications";
 const statusDic = [
   {
     id: 0,
@@ -282,12 +299,13 @@ export default {
           text: "申请人",
           align: "left",
           width: "5%",
+          sortable: false,
           value: "from"
         },
-        { text: "申请人单位", value: "company", width: "20%" },
-        { text: "申请时间", value: "create", width: "10%" },
-        { text: "状态", value: "status", width: "10%" },
-        { text: "候审单位", value: "current", width: "15%" },
+        { text: "申请人单位", sortable: false, value: "company", width: "20%" },
+        { text: "申请时间", sortable: false, value: "create", width: "10%" },
+        { text: "状态", sortable: false, value: "status", width: "10%" },
+        { text: "候审单位", sortable: false, value: "current", width: "15%" },
         {
           text: "备注",
           value: "remark",
@@ -349,8 +367,14 @@ export default {
       return result ? result.color : "info";
     },
 
-    showDetail() {
+    showDetail(props) {
       this.showDetailCard = true;
+      console.log(props);
+      applications.getApplyDetail();
+    },
+
+    loadMore() {
+      this.$emit("requestMore");
     }
   }
 };

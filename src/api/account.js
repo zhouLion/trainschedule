@@ -26,10 +26,6 @@ export default {
    * @param {{ UserName:string, Password:string, Verify:string }} param0 
    */
   loginRest({ UserName, Password, Verify }) {
-    // let formdata = new FormData();
-    // formdata.append("UserName", UserName)
-    // formdata.append("Password", Password)
-    // formdata.append("Verify", Verify)
     return Post("account/login/rest", { UserName, Password, Verify })
   },
 
