@@ -17,11 +17,19 @@
 
           <v-list-tile avatar tag="div">
             <v-list-tile-avatar>
-              <img src="https://avataaars.io/" />
+              <img
+                :src="
+                  `https://trainschdule.mynatapp.cc${
+                    $store.getters['Users/avatar']
+                  }`
+                "
+              />
             </v-list-tile-avatar>
 
             <v-list-tile-content>
-              <v-list-tile-title>苏明玉</v-list-tile-title>
+              <v-list-tile-title>{{
+                $store.state.Users.userInfo.realName
+              }}</v-list-tile-title>
             </v-list-tile-content>
 
             <v-list-tile-action>

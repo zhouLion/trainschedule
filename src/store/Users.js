@@ -1,7 +1,7 @@
 import account from '../api/account';
 import users from '../api/users'
-
-let userInfoContruct = {
+let userInfoFromLocalstorage = localStorage.getItem("userInfo");
+let userInfoDefault = {
   "permissionCompanies": [],
   "address": "",
   "phone": "",
@@ -30,30 +30,47 @@ let userInfoContruct = {
   },
   "privilege": 0
 }
+let userInfo = userInfoFromLocalstorage ? JSON.parse(userInfoFromLocalstorage) : userInfoDefault;
 
 let state = {
-  userInfo: JSON.parse(JSON.stringify(userInfoContruct))
+  userInfo: userInfo
 }
 
 let actions = {
-  async userLogin({ UserName, Password, VerifyCode }) {
+  async userLogin({ state, commit }, { UserName, Password, VerifyCode }) {
     await account.loginRest({
       UserName, Password, VerifyCode
     });
   },
-  async userGetInfo() {
-    let result = await users.getUserInfo();
-    console.log(result);
+  async userGetInfo({ commit }) {
+    try {
+      let result = await users.getUserInfo();
+      commit("setUserInfo", result);
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 
 let mutations = {
+  setUserInfo(state, userInfo) {
+    localStorage.setItem("userInfo", JSON.stringify(userInfo));
+    state.userInfo = userInfo;
+  }
+}
 
+let getters = {
+  // 用户头像
+  avatar(state) {
+    let { avatar } = state.userInfo;
+    return avatar || "defaults/def-male-logo.png";
+  }
 }
 
 export default {
   namespaced: true,
   state,
   actions,
-  mutations
+  mutations,
+  getters
 };

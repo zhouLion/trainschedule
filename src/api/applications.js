@@ -44,9 +44,22 @@ export default {
 
   /**
    * 获取指定用户所有申请
+   * @param {{ username?:string ,page: int, pageSize: int }} param
    */
-  getApplyFromUser: () => {
-    return Get("apply/fromUser");
+  getApplyFromUser: ({ username, page = 1, pageSize = 10 }) => {
+    let data = {
+      page,
+      pageSize
+    };
+    if (username) {
+      data.username = username;
+    }
+    return Get("apply/fromUser", {
+      params: data,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      }
+    });
   },
 
   /**
