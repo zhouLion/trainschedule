@@ -2,6 +2,7 @@ import request from "../utils/request"
 
 let Post = request.post
 let Get = request.get
+let Delete = request.delete
 
 export default {
   /**
@@ -25,7 +26,9 @@ export default {
 
   getApplyDetail: ({ id }) => {
     return Get("apply/detail", {
-      id
+      params: {
+        id
+      }
     })
   },
 
@@ -70,5 +73,41 @@ export default {
     return Post("apply/auth", {
       Param: param
     });
+  },
+
+  /**
+   * #### 提交申请
+   * @param {{request: {xjts:string, ltts: string},xjlb: string,stamp: {ldsj:string},to: Array<int>}
+   * } Param 
+   * @param {String} Reason
+   * @param {String} Verify 
+   * @param {Boolean} NotStart 
+   */
+  submitApply: (Param, Reason, Verify, NotStart) => {
+    let headers = {
+      "Content-Type": "application/json",
+    };
+    return Post("apply/submit", {
+      Param,
+      Reason,
+      Verify,
+      NotStart
+    }, {
+        headers
+      })
+  },
+
+  withdraw(id) {
+    return Post("apply/withdraw", {
+      id
+    })
+  },
+
+  removeApply(id) {
+    return Delete("apply/remove", {
+      params: {
+        id
+      }
+    })
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <v-card flat class="pa-3 applications">
+  <v-card flat class="applications">
     <v-toolbar card dense color="transparent">
       <v-toolbar-title>
         <h4>{{ apptitle }}</h4></v-toolbar-title
@@ -34,7 +34,7 @@
           <v-data-table
             :headers="headers"
             :rows-per-page-items="rowsPerPageItems"
-            :items="data"
+            :items="applicationsData"
             :search="search"
             v-model="selected"
             :loading="loading"
@@ -113,7 +113,7 @@
     <v-card-text class="pa-0" v-if="!showTable">
       <v-container grid-list-md>
         <v-data-iterator
-          :items="data"
+          :items="applicationsData"
           item-key="name"
           :rows-per-page-items="rowsPerPageItems"
           content-tag="v-layout"
@@ -219,10 +219,12 @@
           <v-icon left>
             twitter
           </v-icon>
-          <span class="title font-weight-light">苏明玉</span>
+          <span class="title font-weight-light">
+            {{ $store.getters["Users/realName"] }}
+          </span>
         </v-card-title>
         <v-card-text class="card-text-mid">
-          jsofdjaosidjflaskjfdl
+          {{ currentDetail }}
         </v-card-text>
         <v-card-actions class="ps-absolute bottom">
           <v-btn flat icon color="primary" disabled>
@@ -263,6 +265,8 @@
 
 <script>
 import applications from "../../api/applications";
+import { format } from "timeago.js";
+
 const statusDic = [
   {
     id: 0,
@@ -288,39 +292,53 @@ const statusDic = [
 export default {
   data() {
     return {
-      search: "",
-      showSearch: false,
-      showDetailCard: false,
-      rowsPerPageItems: [10, 20, 50, 100],
-      showTable: true,
-      selected: [],
+      detailList: [],
       headers: [
         {
-          text: "申请人",
           align: "left",
-          width: "5%",
           sortable: false,
-          value: "from"
-        },
-        { text: "申请人单位", sortable: false, value: "company", width: "20%" },
-        { text: "申请时间", sortable: false, value: "create", width: "10%" },
-        { text: "状态", sortable: false, value: "status", width: "10%" },
-        { text: "候审单位", sortable: false, value: "current", width: "15%" },
-        {
-          text: "备注",
-          value: "remark",
-          width: "20%",
-          sortable: false,
-          class: "text-truncate"
+          text: "申请人",
+          value: "from",
+          width: "15%"
         },
         {
-          text: "操作",
           sortable: false,
-          value: "oper",
+          text: "申请人单位",
+          value: "company",
+          width: "20%"
+        },
+        {
+          sortable: false,
+          text: "申请时间",
+          value: "create",
+          width: "15%"
+        },
+        {
+          sortable: false,
+          text: "状态",
+          value: "status",
+          width: "12%"
+        },
+        {
+          sortable: false,
+          text: "候审单位",
+          value: "current",
+          width: "20%"
+        }, // {
+        //   text: "备注",
+        //   value: "remark",
+        //   width: "20%",
+        //   sortable: false,
+        //   class: "text-truncate"
+        // },
+        {
           align: "center",
+          sortable: false,
+          text: "操作",
+          value: "oper",
           width: "15%"
         }
-      ]
+      ],
       /**
        * []{
        * id:申请的id,
@@ -332,6 +350,13 @@ export default {
         current:当前申请所在层级
        * }
        */
+      loadingDetail: false,
+      rowsPerPageItems: [10, 20, 50, 100],
+      search: "",
+      selected: [],
+      showDetailCard: false,
+      showSearch: false,
+      showTable: true
     };
   },
   props: {
@@ -348,6 +373,19 @@ export default {
     loading: {
       type: Boolean,
       default: false
+    }
+  },
+  computed: {
+    applicationsData() {
+      let { data } = this;
+      return data.map(d => {
+        let { create, ...rest } = d;
+        return {
+          create: format(create, "zh_CN"),
+          ...rest
+        };
+      });
+      format;
     }
   },
   methods: {
@@ -367,12 +405,36 @@ export default {
       return result ? result.color : "info";
     },
 
-    showDetail(props) {
+    /**
+     * 展示详情
+     */
+    showDetail({ item }) {
       this.showDetailCard = true;
-      console.log(props);
-      applications.getApplyDetail();
+      // 现在本地查找
+      let findDetailLocal = this.detailList.find(
+        detail => detail.id == item.id
+      );
+      if (findDetailLocal) {
+        this.currentDetail = findDetailLocal;
+        return;
+      }
+      this.loadingDetail = true;
+      // 如果本地缓存数组里没有，则去请求后台
+      applications
+        .getApplyDetail(item.id)
+        .then(data => {
+          if (!data) {
+            return false;
+          }
+          this.currentDetail = data;
+          // 添加到本地数组
+          this.detailList.push(data);
+        })
+        .finally(() => {
+          this.loadingDetail = false;
+        });
     },
-
+    // 请求父组件加载更多
     loadMore() {
       this.$emit("requestMore");
     }

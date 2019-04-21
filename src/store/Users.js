@@ -64,6 +64,20 @@ let getters = {
   avatar(state) {
     let { avatar } = state.userInfo;
     return avatar || "defaults/def-male-logo.png";
+  },
+  companyPath(state) {
+    let { company } = state.userInfo;
+    return company.path;
+  },
+  // 用户部门层级
+  companyPathArray(state, getters) {
+    let { companyPath } = getters;
+    let companyPathArray = companyPath.split("/");
+    // companyPathArray.shift();
+    return companyPathArray;
+  },
+  realName(state) {
+    return state.userInfo.realName
   }
 }
 

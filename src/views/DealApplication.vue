@@ -5,9 +5,9 @@
       <v-tab to="/dealapplication/tome">待我审核</v-tab>
       <!-- <v-tab to="/dealapplication/history">历史记录</v-tab> -->
     </v-tabs>
-    <!-- <keep-alive> -->
-    <router-view></router-view>
-    <!-- </keep-alive> -->
+    <keep-alive>
+      <router-view></router-view>
+    </keep-alive>
   </v-layout>
 </template>
 <script>

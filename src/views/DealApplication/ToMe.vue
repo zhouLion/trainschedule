@@ -44,7 +44,6 @@
 <script>
 import Applications from "../../components/table/Applications";
 import apply from "../../api/applications";
-import { format } from "timeago.js";
 export default {
   name: "i_deal",
   components: {
@@ -91,15 +90,10 @@ export default {
               message: "加载完毕"
             });
           }
-          applies.forEach(apply => {
-            apply.create = format(apply.create, "zh_CN");
-          });
+          this.page = this.page + 1;
           // 如果是append模式，则数据将叠加到源数组上
           if (append == true) {
-            this.page = this.page + 1;
-            return (this.applicationToMe = this.applicationToMe.concat(
-              applies
-            ));
+            applies = this.applicationToMe.concat(applies);
           }
           return (this.applicationToMe = applies);
         })

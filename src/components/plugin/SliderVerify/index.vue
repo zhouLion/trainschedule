@@ -18,7 +18,7 @@
                   :style="{
                     backgroundImage: 'url(' + fturl + ')',
                     top: posY + 'px',
-                    left: sliderLeft,
+                    left: sliderLeft + 'px',
                     zIndex: 2
                   }"
                 />
@@ -73,7 +73,7 @@
         </div>
       </div>
       <div class="sv_slider" ref="sv_slider">
-        <div class="sv_guide_tip">
+        <div class="sv_guide_tip" :class="{ sv_hide: moving }">
           按住左边滑块，拖动完成上方拼图
         </div>
         <div
@@ -81,12 +81,14 @@
           :class="{ sv_moving: moving }"
           @mouseover="onMoveOver"
           @mousedown="onMoveSlider"
-          :style="{ left: sliderLeft }"
+          :style="{ left: sliderLeft + 'px' }"
         ></div>
         <div class="sv_curtain_tip sv_hide">
           点击上图按钮并沿道路拖动到终点处
         </div>
-        <div class="sv_curtain_knob sv_hide">移动到此开始验证</div>
+        <div class="sv_curtain_knob" :class="{ sv_hide: !moving }">
+          {{ sliderText }}
+        </div>
         <div class="sv_ajax_tip sv_ready"></div>
       </div>
     </div>
@@ -134,6 +136,11 @@ export default {
       type: String,
       required: true,
       default: "img/verify/verify-fg.png"
+    },
+    sliderText: {
+      type: String,
+      required: false,
+      default: "移动到此开始验证"
     }
   },
   destroyed() {
@@ -166,28 +173,27 @@ export default {
       if (x_sx > sliderWidth || x_sx < 0) {
         return false;
       }
-      this.sliderLeft = x_sx + "px";
+      this.sliderLeft = x_sx;
     },
     onMoveEnd() {
       this.endTime = new Date().getTime();
       document.removeEventListener("mousemove", this.onMouseMoving);
-
-      this.verifyCallback(true);
-      // this.timeOut = setTimeout(() => {
-      //   let num = 10 * Math.random();
-      //   let flag = parseInt(num) % 2 == 0;
-      //   this.verifyCallback(flag, "请求超时");
-      // }, 3000);
+      this.verifyCallback(true, this.sliderLeft);
+      this.timeOut = setTimeout(() => {
+        this.verifyCallback(false, "请求超时");
+      }, 5000);
     },
     verifyCallback(flag, msg) {
       this.moving = false;
       this.showcard = false;
       // 清空定时器
       this.timeOut && clearTimeout(this.timeOut);
-      this.$emit("verify", flag);
-      this.sliderLeft = 0;
-      document.removeEventListener("mouseup", this.onMoveEnd);
+      this.$emit("verify", flag, msg, () => {
+        this.sliderLeft = 0;
+        document.removeEventListener("mouseup", this.onMoveEnd);
+      });
     },
+
     /**
      * 刷新验证码
      * @param {Boolean?} force
@@ -212,7 +218,6 @@ export default {
         let result = await verify.refreshVerify();
         let bg = "https://trainschdule.mynatapp.cc/static/verify-bg.png";
         let ft = "https://trainschdule.mynatapp.cc/static/verify-ft.png";
-        console.log(result);
         let { id, posY } = result;
         this.bgurl = bg + "?id=" + id;
         this.fturl = ft + "?id=" + id;

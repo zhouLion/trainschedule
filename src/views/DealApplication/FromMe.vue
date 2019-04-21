@@ -16,6 +16,7 @@
             icon
             slot="activator"
             small
+            :loading="appliesOnHandle.includes(props.item)"
             color="orange"
             @click="withdraw(props)"
           >
@@ -29,6 +30,7 @@
             icon
             slot="activator"
             small
+            :loading="appliesOnHandle.includes(props.item)"
             color="error"
             @click="removeApply(props)"
           >
@@ -44,7 +46,7 @@
 <script>
 import Applications from "../../components/table/Applications";
 import apply from "../../api/applications";
-import { format } from "timeago.js";
+import applications from "../../api/applications";
 
 export default {
   name: "",
@@ -56,6 +58,7 @@ export default {
       applicationFromMe: [],
       onloading: false,
       page: 0,
+      appliesOnHandle: [],
       pageSize: 10
     };
   },
@@ -64,16 +67,45 @@ export default {
   },
   methods: {
     // 撤回操作
-    withdraw() {
-      return this.$Message({
-        message: "功能开发中"
-      });
+    withdraw({ item }) {
+      this.appliesOnHandle.push(item);
+      applications
+        .withdraw(item.id)
+        .then(d => {
+          let indexItem = this.applicationFromMe.findIndex(
+            apply => apply.id == item.id
+          );
+          // this.appliesOnHandle.push(item);
+          this.applicationFromMe.splice(indexItem, 1);
+          return this.$Message({
+            message: "撤回成功"
+          });
+        })
+        .finally(() => {
+          this.removeHandleStatus(item);
+        });
     },
     // 删除操作
-    removeApply() {
-      return this.$Message({
-        message: "功能开发中"
-      });
+    removeApply({ item }) {
+      this.appliesOnHandle.push(item);
+      applications
+        .removeApply(item.id)
+        .then(d => {
+          let indexItem = this.applicationFromMe.findIndex(
+            apply => apply.id == item.id
+          );
+          this.applicationFromMe.splice(indexItem, 1);
+          return this.$Message({
+            message: "删除成功"
+          });
+        })
+        .finally(() => {
+          this.removeHandleStatus(item);
+        });
+    },
+    removeHandleStatus(item) {
+      let index = this.appliesOnHandle.findIndex(apply => apply.id == item.id);
+      this.appliesOnHandle.splice(index, 1);
     },
     fetchApplications(append = false) {
       if (this.onloading == true) {
@@ -96,17 +128,12 @@ export default {
               message: "加载完毕"
             });
           }
-          applies.forEach(apply => {
-            apply.create = format(apply.create, "zh_CN");
-          });
+          this.page = this.page + 1;
           // 如果是append模式，则数据将叠加到源数组上
           if (append == true) {
-            this.page = this.page + 1;
-            return (this.applicationFromMe = this.applicationFromMe.concat(
-              applies
-            ));
+            applies = this.applicationFromMe.concat(applies);
           }
-          return (this.applicationFromMe = applies);
+          this.applicationFromMe = applies;
         })
         .finally(() => {
           this.onloading = false;

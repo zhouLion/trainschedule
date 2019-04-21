@@ -14,7 +14,7 @@
                 <v-form>
                   <v-text-field
                     append-icon="person"
-                    name="login"
+                    name="username"
                     label="账号"
                     type="text"
                     v-model="model.UserName"
@@ -23,13 +23,13 @@
                     append-icon="lock"
                     name="password"
                     label="密码"
-                    id="password"
                     type="password"
                     v-model="model.Password"
                   ></v-text-field>
                   <v-input>
                     <SliderVerify
                       :duration="2000"
+                      sliderText="验证通过将自动登录"
                       fg="img/verify/verify-ft.png"
                       bg="img/verify/verify-bg.png"
                       @verify="verify"
@@ -68,8 +68,8 @@ export default {
   data: () => ({
     loading: false,
     model: {
-      UserName: "11111111",
-      Password: "11111111"
+      UserName: "",
+      Password: ""
     },
     snack: {
       show: false,
@@ -78,13 +78,15 @@ export default {
   }),
   methods: {
     // 执行登录
-    async login() {
+    async login(x) {
+      console.log(x);
       this.loading = true;
       let { UserName, Password } = this.model;
       await account.loginRest({
         UserName,
         Password,
-        Verify: "201700816"
+        Verify: x
+        // Verify: "201700816"
       });
 
       // let userInfo = await users.getUserInfo();
@@ -99,20 +101,15 @@ export default {
     },
 
     // 验证
-    verify(flag) {
+    verify(flag, msg, callback) {
       if (flag == true) {
-        this.$Message({
-          message: "验证成功，等待登录",
-          type: "success",
-          duration: 1 * 1000
-        });
-        this.login();
-      } else {
-        this.$Message({
-          message: "验证失败",
-          type: "error",
-          duration: 1 * 1000
-        });
+        // this.$Message({
+        //   message: "验证成功，等待登录",
+        //   type: "success",
+        //   duration: 1 * 1000
+        // });
+        this.login(msg);
+        callback();
       }
     }
   }
