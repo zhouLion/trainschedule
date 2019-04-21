@@ -5,9 +5,34 @@
     @requestMore="requestMoreData"
     :data="applicationToMe"
   >
-    <v-btn icon @click="fetchApplications(false)" slot="headerAction">
-      <v-icon>refresh</v-icon>
-    </v-btn>
+    <template slot="headerAction" slot-scope="{ selected }">
+      <v-tooltip bottom>
+        <v-btn
+          icon
+          @click="authApply(selected, 0)"
+          :disabled="!selected || selected.length == 0"
+          slot="activator"
+        >
+          <v-icon>assignment_return</v-icon>
+        </v-btn>
+        批量驳回
+      </v-tooltip>
+      <v-tooltip bottom>
+        <v-btn
+          :disabled="!selected || selected.length == 0"
+          @click="authApply(selected, 1)"
+          icon
+          slot="activator"
+        >
+          <v-icon color="error">assignment_turned_in</v-icon>
+        </v-btn>
+        批量通过
+      </v-tooltip>
+      <v-btn icon @click="fetchApplications(false)">
+        <v-icon>refresh</v-icon>
+      </v-btn>
+    </template>
+
     <div slot="action" slot-scope="{ props, array }">
       <v-tooltip top color="error">
         <v-btn
@@ -38,6 +63,17 @@
         通过
       </v-tooltip>
     </div>
+    <v-dialog
+      v-model="dialog"
+      scrollable
+      fullscreen
+      persistent
+      :overlay="false"
+      max-width="500px"
+      transition="dialog-transition"
+    >
+      123
+    </v-dialog>
   </Applications>
 </template>
 
@@ -51,6 +87,7 @@ export default {
   },
   data() {
     return {
+      dialog: false,
       applicationToMe: [],
       onloading: false,
       page: 0,
@@ -63,9 +100,13 @@ export default {
     this.fetchApplications();
   },
   methods: {
-    returnAssign({ item }) {},
-    turnInAssign({ item }) {},
-
+    returnAssign(props) {
+      console.log(props);
+    },
+    turnInAssign(props) {},
+    authApply(selected, type) {
+      this.dialog = true;
+    },
     /**
      * 获取我的待处理申请
      */

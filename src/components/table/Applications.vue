@@ -1,5 +1,6 @@
 <template>
   <v-card flat class="applications">
+    <slot></slot>
     <v-toolbar card dense color="transparent">
       <v-toolbar-title>
         <h4>{{ apptitle }}</h4></v-toolbar-title
@@ -24,7 +25,7 @@
         <v-btn icon @click="showTable = !showTable">
           <v-icon>{{ showTable ? "view_comfy" : "list" }}</v-icon>
         </v-btn>
-        <slot name="headerAction"></slot>
+        <slot name="headerAction" :selected="selected"></slot>
       </v-layout>
     </v-toolbar>
     <v-divider></v-divider>
@@ -293,6 +294,7 @@ export default {
   data() {
     return {
       detailList: [],
+      currentDetail: null,
       headers: [
         {
           align: "left",

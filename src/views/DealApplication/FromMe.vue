@@ -6,9 +6,34 @@
       :data="applicationFromMe"
       @requestMore="requestMoreData"
     >
-      <v-btn icon @click="fetchApplications(false)" slot="headerAction">
-        <v-icon>refresh</v-icon>
-      </v-btn>
+      <template slot="headerAction" slot-scope="{ selected }">
+        <v-tooltip bottom>
+          <v-btn icon slot="activator">
+            <v-icon>settings_backup_restore</v-icon>
+          </v-btn>
+          批量撤回
+        </v-tooltip>
+        <v-tooltip bottom>
+          <v-btn
+            :disabled="!selected || selected.length == 0"
+            @click="removeMany(selected)"
+            icon
+            slot="activator"
+          >
+            <v-icon color="error">delete</v-icon>
+          </v-btn>
+          批量删除
+        </v-tooltip>
+        <v-tooltip bottom>
+          <v-btn icon slot="activator" to="/addapplication">
+            <v-icon>add</v-icon>
+          </v-btn>
+          新建申请
+        </v-tooltip>
+        <v-btn icon @click="fetchApplications(false)">
+          <v-icon>refresh</v-icon>
+        </v-btn>
+      </template>
       <div slot="action" slot-scope="{ props, array }">
         <v-tooltip bottom>
           <v-btn
@@ -84,6 +109,9 @@ export default {
         .finally(() => {
           this.removeHandleStatus(item);
         });
+    },
+    removeMany(selected) {
+      console.log(selected);
     },
     // 删除操作
     removeApply({ item }) {

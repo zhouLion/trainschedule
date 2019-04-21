@@ -24,7 +24,7 @@ export default {
     });
   },
 
-  getApplyDetail: ({ id }) => {
+  getApplyDetail: (id) => {
     return Get("apply/detail", {
       params: {
         id
