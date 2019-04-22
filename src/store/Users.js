@@ -67,7 +67,7 @@ let getters = {
   },
   companyPath(state) {
     let { company } = state.userInfo;
-    return company.path;
+    return company ? company.path : "";
   },
   // 用户部门层级
   companyPathArray(state, getters) {
@@ -78,6 +78,9 @@ let getters = {
   },
   realName(state) {
     return state.userInfo.realName
+  },
+  permissionCompanies(state) {
+    return state.userInfo.permissionCompanies;
   }
 }
 

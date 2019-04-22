@@ -35,9 +35,7 @@ export default {
   /**
    * 获取指定单位所有申请
    */
-  getApplyFromCompany: ({
-    path
-  }) => {
+  getApplyFromCompany: (path) => {
     return Get("apply/fromCompany", {
       data: {
         path

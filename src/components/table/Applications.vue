@@ -271,22 +271,32 @@ import { format } from "timeago.js";
 const statusDic = [
   {
     id: 0,
-    color: "orange",
-    text: "审核中"
+    color: "grey",
+    text: "未发布"
   },
   {
     id: 1,
-    color: "success",
-    text: "通过所有审核"
+    color: "orange lighten-2",
+    text: "已撤回"
   },
   {
     id: 2,
-    color: "success lighten-1",
-    text: "通过，待管理员审核"
+    color: "info lighten-1",
+    text: "审核中"
   },
   {
     id: 4,
-    color: "error",
+    color: "success light-1",
+    text: "通过所有审核"
+  },
+  {
+    id: 8,
+    color: "success",
+    text: "通过，待管理员审核"
+  },
+  {
+    id: 16,
+    color: "success",
     text: "驳回"
   }
 ];
