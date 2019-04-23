@@ -301,7 +301,8 @@ export default {
     comebackDate() {
       let { ltts, xjts, ldsj } = this.params;
       return moment(ldsj)
-        .add(ltts + xjts, "days")
+        .add(ltts, "days")
+        .add(xjts,"days")
         .format("YYYY-MM-DD");
     },
     // 倒序的人员部门
