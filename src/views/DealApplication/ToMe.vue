@@ -2,7 +2,7 @@
   <v-container grid-list-md>
     <v-layout row wrap>
       <v-flex lg3>
-        <v-card :height="600">
+        <v-card >
           <v-toolbar dense flat>
             选择部门
           </v-toolbar>
