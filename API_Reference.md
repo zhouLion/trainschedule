@@ -70,22 +70,44 @@
 
 #### 注册[暂不实现前端]
 
-`Post` /account/register/rest
+#####正常注册
 
-{
-    UserName[string]:用户名,
-    Email[string]:验证邮箱,
-    Password[string]:密码,
-    ConfirmPassword[string]:确认密码,
-    Company[string]:单位路径,
-    VerifyCode[string]:x轴数值,
-    auth:{//授权码，经有权限的账号为Key，使用GoogleAuth授权 
-        AuthUserName[string]:用于授权的账号,
-        AuthCode[string]:授权账号的当前GoogleAuth授权码
+    `Post` /account/register/rest
+```json
+    {
+        UserName[string]:用户名,
+        Email[string]:验证邮箱,
+        Password[string]:密码,
+        ConfirmPassword[string]:确认密码,
+        Company[string]:单位路径,
+        VerifyCode[string]:x轴数值,
+        auth:{//授权码，经有权限的账号为Key，使用GoogleAuth授权 
+            AuthUserName[string]:用于授权的账号,
+            AuthCode[string]:授权账号的当前GoogleAuth授权码
+        }
     }
-}
+```
+#####批量注册
 
-
+	`Post` /account/mutiRegister/rest
+```json
+	{
+	    "Company": "单位的路径",
+	    "auth": {
+	        "Code": "963817",
+	        "AuthByUserName": "Admin001"
+	    },
+	    "Verify": "201700816",
+	    "users": [
+	        {
+	            "UserName": "liuchang",
+	            "Email": "33333333@xt2l.com",
+	            "Password": "liuchang"
+	        },
+	        ...
+	    ]
+	}
+```
 
 #### 授权码[暂不实现前端]
 
@@ -313,17 +335,6 @@ Param：{
 | ---------- | ------ | ------------------ |
 | id   | string | 申请的id  |
 
-#####[暂不实现前端]批量删除指定状态的申请
-
-等价于按状态筛选并批量调用`删除申请`
-
----
-当申请处于`未发布`、`已撤回`状态时，用户可删除申请
-`Delete` /apply/RemoveAll
-| 字段名     | 类型   | 描述               |
-| ---------- | ------ | ------------------ |
-| status   | int | 申请的当前状态 0:未发布 1:已撤回  |
-
 
 ####获取申请
 
@@ -486,6 +497,15 @@ Param：{
 单位以路径方式表示，如	Root/北京总部/市场运营部/客户管理科
 
 
+####单位所有成员
+
+`Get` /company/allMembers
+| 字段名     | 类型   | 描述               |
+| ---------- | ------ | ------------------ |
+| path   | string | 需要获取的单位路径             |
+| page   | int | 获取哪一页页面，默认为0 |
+| pageSize   | int | 单个页面的项数量，默认为10 |
+
 
 
 
@@ -493,12 +513,11 @@ Param：{
 
 ---
 
-`post` /company/child
+`Get` /company/child
 
 | 字段名     | 类型   | 描述               |
 | ---------- | ------ | ------------------ |
 | path   | string | 需要获取的单位路径             |
-| showPrivate   | string | 如需要显示隐藏单位，输入管理员授权码             |
 
 `Response`
 ```json
