@@ -25,3 +25,6 @@ yarn-error.log*
 
 # zip files
 *.7z
+
+yarn.lock
+package-lock.json
