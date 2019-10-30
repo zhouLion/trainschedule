@@ -1,74 +1,106 @@
 <template>
-  <v-card flat class="applications">
+  <v-card
+    class="applications"
+    flat
+  >
     <slot></slot>
-    <v-toolbar card dense color="transparent">
+    <v-toolbar
+      card
+      color="transparent"
+      dense
+    >
       <v-toolbar-title>
-        <h4>{{ apptitle }}</h4></v-toolbar-title
+        <h4>{{ apptitle }}</h4>
+      </v-toolbar-title>
+      <v-layout
+        row
+        wrap
       >
-      <v-layout row wrap>
         <v-spacer></v-spacer>
         <v-text-field
-          v-model="search"
-          append-icon="search"
-          label="关键词查询"
           @blur="showSearch = false"
-          single-line
-          hide-details
-          outline
+          append-icon="search"
           class="pa-0 ma-0"
+          hide-details
+          label="关键词查询"
+          outline
+          single-line
           small
+          v-model="search"
           v-show="showSearch"
         ></v-text-field>
-        <v-btn icon @click="showSearch = true" v-show="!showSearch">
+        <v-btn
+          @click="showSearch = true"
+          icon
+          v-show="!showSearch"
+        >
           <v-icon>search</v-icon>
         </v-btn>
-        <v-btn icon @click="showTable = !showTable">
+        <v-btn
+          @click="showTable = !showTable"
+          icon
+        >
           <v-icon>{{ showTable ? "view_comfy" : "list" }}</v-icon>
         </v-btn>
-        <slot name="headerAction" :selected="selected"></slot>
+        <slot
+          :selected="selected"
+          name="headerAction"
+        ></slot>
       </v-layout>
     </v-toolbar>
     <v-divider></v-divider>
-    <v-card-text class="pa-0" v-if="showTable">
+    <v-card-text
+      class="pa-0"
+      v-if="showTable"
+    >
       <v-container grid-list-md>
         <template>
           <v-data-table
             :headers="headers"
-            :rows-per-page-items="rowsPerPageItems"
             :items="applicationsData"
-            :search="search"
-            v-model="selected"
             :loading="loading"
-            select-all
-            hide-actions
             :pagination="{
               rowsPerPage: -1
             }"
-            item-key="id"
+            :rows-per-page-items="rowsPerPageItems"
+            :search="search"
             class="elevation-0"
+            hide-actions
+            item-key="id"
+            select-all
+            v-model="selected"
           >
             <v-progress-linear
-              v-slot:progress
               color="blue"
               indeterminate
+              v-slot:progress
             ></v-progress-linear>
-            <template slot="items" slot-scope="props">
+            <template
+              slot="items"
+              slot-scope="props"
+            >
               <!-- <td>
               <v-avatar size="36px">
                 <img :src="props.item.avatar" :alt="props.item.from" />
               </v-avatar>
-            </td> -->
+              </td>-->
               <td>
                 <v-checkbox
-                  v-model="props.selected"
-                  primary
                   hide-details
+                  primary
+                  v-model="props.selected"
                 ></v-checkbox>
               </td>
 
-              <td v-for="header in headers" :key="header.text">
+              <td
+                :key="header.text"
+                v-for="header in headers"
+              >
                 <template v-if="header.value == 'oper'">
-                  <v-layout row wrap>
+                  <v-layout
+                    row
+                    wrap
+                  >
                     <slot
                       name="action"
                       v-bind="{
@@ -79,84 +111,92 @@
 
                     <v-tooltip bottom>
                       <v-btn
-                        slot="activator"
                         @click="showDetail(props)"
+                        color="primary"
                         flat
                         icon
-                        color="primary"
+                        slot="activator"
                         small
                       >
                         <v-icon>more</v-icon>
-                      </v-btn>
-                      查看详情
+                      </v-btn>查看详情
                     </v-tooltip>
                   </v-layout>
                 </template>
                 <template v-else-if="header.text == '状态'">
                   <v-chip
+                    :color="formatterStatusColor(props.item.status)"
                     class="pa-0"
                     dark
                     label
-                    :color="formatterStatusColor(props.item.status)"
                     small
-                    >{{ formatterStatus(props.item.status) }}
-                  </v-chip>
+                  >{{ formatterStatus(props.item.status) }}</v-chip>
                 </template>
-                <template v-else>
-                  {{ props.item[header.value] }}
-                </template>
+                <template v-else>{{ props.item[header.value] }}</template>
               </td>
             </template>
           </v-data-table>
         </template>
       </v-container>
     </v-card-text>
-    <v-card-text class="pa-0" v-if="!showTable">
+    <v-card-text
+      class="pa-0"
+      v-if="!showTable"
+    >
       <v-container grid-list-md>
         <v-data-iterator
           :items="applicationsData"
-          item-key="name"
-          :rows-per-page-items="rowsPerPageItems"
-          content-tag="v-layout"
-          row
-          wrap
-          hide-actions
+          :loading="loading"
           :pagination="{
             rowsPerPage: -1
           }"
-          :loading="loading"
+          :rows-per-page-items="rowsPerPageItems"
+          content-tag="v-layout"
+          hide-actions
+          item-key="name"
+          row
+          wrap
         >
           <template v-slot:item="props">
-            <v-flex xs12 sm6 md4 lg4 class="hover-shadow">
+            <v-flex
+              class="hover-shadow"
+              lg4
+              md4
+              sm6
+              xs12
+            >
               <v-card class="elevation-1">
                 <v-card-title>
-                  <h4><v-icon>account_box</v-icon>{{ props.item.from }}</h4>
+                  <h4>
+                    <v-icon>account_box</v-icon>
+                    {{ props.item.from }}
+                  </h4>
                   <v-spacer></v-spacer>
                   <v-chip
+                    :color="formatterStatusColor(props.item.status)"
                     class="pa-0"
                     dark
-                    :color="formatterStatusColor(props.item.status)"
                     small
-                    >{{ formatterStatus(props.item.status) }}
-                  </v-chip>
+                  >{{ formatterStatus(props.item.status) }}</v-chip>
                 </v-card-title>
                 <v-divider></v-divider>
                 <v-list dense>
                   <v-list-tile
+                    :key="header.text"
                     class="v-table"
                     v-for="header in headers"
-                    :key="header.text"
                     v-if="header.text !== '状态'"
                   >
-                    <v-list-tile-content :style="{ width: '20%' }">
-                      {{ header.text }}:
-                    </v-list-tile-content>
+                    <v-list-tile-content :style="{ width: '20%' }">{{ header.text }}:</v-list-tile-content>
 
                     <v-list-tile-content
                       class="align-end"
                       v-if="header.value == 'oper'"
                     >
-                      <v-layout row wrap>
+                      <v-layout
+                        row
+                        wrap
+                      >
                         <slot
                           name="action"
                           v-bind="{
@@ -167,16 +207,15 @@
                         <v-spacer></v-spacer>
                         <v-tooltip bottom>
                           <v-btn
-                            slot="activator"
                             @click="showDetail(props)"
+                            color="primary"
                             flat
                             icon
-                            color="primary"
+                            slot="activator"
                             small
                           >
                             <v-icon>more</v-icon>
-                          </v-btn>
-                          查看详情
+                          </v-btn>查看详情
                         </v-tooltip>
                       </v-layout>
                     </v-list-tile-content>
@@ -186,10 +225,11 @@
                       class="align-end text-truncate text-lg-right caption"
                       v-else
                     >
-                      <v-tooltip top :max-width="140">
-                        <v-flex slot="activator">
-                          {{ props.item[header.value] }}
-                        </v-flex>
+                      <v-tooltip
+                        :max-width="140"
+                        top
+                      >
+                        <v-flex slot="activator">{{ props.item[header.value] }}</v-flex>
                         {{ props.item[header.value] }}
                       </v-tooltip>
                     </v-list-tile-content>
@@ -203,9 +243,13 @@
     </v-card-text>
     <v-card-text>
       <div class="text-xs-center pt-2">
-        <v-btn block color="primary" dark :loading="loading" @click="loadMore"
-          >加载更多</v-btn
-        >
+        <v-btn
+          :loading="loading"
+          @click="loadMore"
+          block
+          color="primary"
+          dark
+        >加载更多</v-btn>
       </div>
     </v-card-text>
     <v-navigation-drawer
@@ -215,20 +259,22 @@
       temporary
       v-model="showDetailCard"
     >
-      <v-card flat height="100vh">
+      <v-card
+        flat
+        height="100vh"
+      >
         <v-card-title>
-          <v-icon left>
-            twitter
-          </v-icon>
-          <span class="title font-weight-light">
-            {{ $store.getters["Users/realName"] }}
-          </span>
+          <v-icon left>twitter</v-icon>
+          <span class="title font-weight-light">{{ $store.getters["Users/realName"] }}</span>
         </v-card-title>
-        <v-card-text class="card-text-mid">
-          {{ currentDetail }}
-        </v-card-text>
+        <v-card-text class="card-text-mid">{{ currentDetail }}</v-card-text>
         <v-card-actions class="ps-absolute bottom">
-          <v-btn flat icon color="primary" disabled>
+          <v-btn
+            color="primary"
+            disabled
+            flat
+            icon
+          >
             <v-icon>more</v-icon>
           </v-btn>
         </v-card-actions>
@@ -397,7 +443,6 @@ export default {
           ...rest
         };
       });
-      format;
     }
   },
   methods: {
