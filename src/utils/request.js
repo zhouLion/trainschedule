@@ -1,5 +1,4 @@
 import axios from 'axios'
-import qs from 'qs'
 import $Message from 'vue-m-message'
 
 // create an axios instance
@@ -13,9 +12,6 @@ const service = axios.create({
 // request interceptor
 service.interceptors.request.use(
   config => {
-    if (!config.headers['Content-Type'] || config.headers['Content-Type'].includes('form-urlencoded')) {
-      config.data = qs.stringify(config.data)
-    }
     return config
   },
   error => {

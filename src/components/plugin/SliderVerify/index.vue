@@ -1,30 +1,47 @@
 <template>
   <div class="slider-verify">
-    <div class="sv_holder sv_float" style="touch-action: none;">
+    <div
+      class="sv_holder sv_float"
+      style="touch-action: none;"
+    >
       <div
-        class="sv_widget sv_clean"
         :class="isShowCard ? 'sv_show' : 'sv_hide'"
+        class="sv_widget sv_clean"
       >
         <div class="sv_holder_top"></div>
         <div class="sv_box_holder">
           <div class="sv_box">
             <div class="sv_loading">
-              <div class="sv_bg" v-show="fturl">
-                <img :src="bgurl" class="sv_cut_bg" width="100%" alt="" />
+              <div
+                class="sv_bg"
+                v-show="fturl"
+              >
+                <img
+                  :src="bgurl"
+                  alt
+                  class="sv_cut_bg"
+                  width="100%"
+                />
                 <img
                   :src="fturl"
-                  class="sv_slice"
-                  width="43px"
                   :style="{
                     backgroundImage: 'url(' + fturl + ')',
                     top: posY + 'px',
                     left: sliderLeft + 'px',
                     zIndex: 2
                   }"
+                  class="sv_slice"
+                  width="43px"
                 />
               </div>
-              <div class="sv_loading_icon" v-show="!fturl"></div>
-              <div class="sv_loading_text" v-show="!fturl">加载中...</div>
+              <div
+                class="sv_loading_icon"
+                v-show="!fturl"
+              ></div>
+              <div
+                class="sv_loading_text"
+                v-show="!fturl"
+              >加载中...</div>
             </div>
             <!-- <a
               class="sv_curtain"
@@ -40,7 +57,7 @@
                 class="sv_curtain_button"
                 :class="isShowCard ? 'sv_show' : 'sv_hide'"
               ></div>
-            </a> -->
+            </a>-->
             <!-- <a class="sv_box_tips" style="display: none;"></a> -->
           </div>
           <!-- :class="isShowCard ? 'sv_show' : 'sv_hide'" -->
@@ -48,15 +65,24 @@
             <div class="sv_info_tip sv_fail">
               <div class="sv_info_icon"></div>
               <div class="sv_info_text">
-                <span class="sv_info_type">验证失败:</span
-                ><span class="sv_info_content">拖动滑块将悬浮图像正确拼合</span>
+                <span class="sv_info_type">验证失败:</span>
+                <span class="sv_info_content">拖动滑块将悬浮图像正确拼合</span>
               </div>
             </div>
           </div>
         </div>
-        <div class="sv_bottom" @click="refreshVerify">
-          <v-layout row wrap>
-            <a class="sv_refresh_button" @click="refreshVerify">
+        <div
+          @click="refreshVerify"
+          class="sv_bottom"
+        >
+          <v-layout
+            row
+            wrap
+          >
+            <a
+              @click="refreshVerify"
+              class="sv_refresh_button"
+            >
               <div class="sv_refresh_tips">刷新验证</div>
             </a>
             <v-spacer></v-spacer>
@@ -67,28 +93,30 @@
                   moving = false;
                 }
               "
-              >clear</v-icon
-            >
+            >clear</v-icon>
           </v-layout>
         </div>
       </div>
-      <div class="sv_slider" ref="sv_slider">
-        <div class="sv_guide_tip" :class="{ sv_hide: moving }">
-          按住左边滑块，拖动完成上方拼图
-        </div>
+      <div
+        class="sv_slider"
+        ref="sv_slider"
+      >
         <div
-          class="sv_slider_knob sv_show"
+          :class="{ sv_hide: moving }"
+          class="sv_guide_tip"
+        >按住左边滑块，拖动完成上方拼图</div>
+        <div
           :class="{ sv_moving: moving }"
-          @mouseover="onMoveOver"
-          @mousedown="onMoveSlider"
           :style="{ left: sliderLeft + 'px' }"
+          @mousedown="onMoveSlider"
+          @mouseover="onMoveOver"
+          class="sv_slider_knob sv_show"
         ></div>
-        <div class="sv_curtain_tip sv_hide">
-          点击上图按钮并沿道路拖动到终点处
-        </div>
-        <div class="sv_curtain_knob" :class="{ sv_hide: !moving }">
-          {{ sliderText }}
-        </div>
+        <div class="sv_curtain_tip sv_hide">点击上图按钮并沿道路拖动到终点处</div>
+        <div
+          :class="{ sv_hide: !moving }"
+          class="sv_curtain_knob"
+        >{{ sliderText }}</div>
         <div class="sv_ajax_tip sv_ready"></div>
       </div>
     </div>
@@ -130,12 +158,12 @@ export default {
     bg: {
       type: String,
       required: true,
-      default: "img/verify/verify-bg.png"
+      default: "img/verify/verify-bg.jpg"
     },
     fg: {
       type: String,
       required: true,
-      default: "img/verify/verify-fg.png"
+      default: "img/verify/verify-fg.jpg"
     },
     sliderText: {
       type: String,
@@ -216,8 +244,8 @@ export default {
         this.refreshVerifyTime = curTime;
         this.onRefreshVerify = false;
         let result = await verify.refreshVerify();
-        let bg = "https://trainschdule.mynatapp.cc/static/verify-bg.png";
-        let ft = "https://trainschdule.mynatapp.cc/static/verify-ft.png";
+        let bg = "https://trainschdule.mynatapp.cc/static/verify-bg.jpg";
+        let ft = "https://trainschdule.mynatapp.cc/static/verify-ft.jpg";
         let { id, posY } = result;
         this.bgurl = bg + "?id=" + id;
         this.fturl = ft + "?id=" + id;

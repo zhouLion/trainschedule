@@ -33,11 +33,11 @@
 
 **前景**
 
-​	`Get`/static/verify-ft.png
+​	`Get`/static/verify-ft.jpg
 
 **背景**
 
-​	`Get`/static/verify-bg.png
+​	`Get`/static/verify-bg.jpg
 
 
 

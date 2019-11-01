@@ -1,46 +1,61 @@
 <template>
-  <v-app id="login" class="primary">
+  <v-app
+    class="primary"
+    id="login"
+  >
     <v-content>
-      <v-container fluid fill-height>
-        <v-layout align-center justify-center>
-          <v-flex xs12 sm8 md4 lg4>
+      <v-container
+        fill-height
+        fluid
+      >
+        <v-layout
+          align-center
+          justify-center
+        >
+          <v-flex
+            lg4
+            md4
+            sm8
+            xs12
+          >
             <v-card class="elevation-1 pa-3">
               <v-card-text>
                 <div class="layout column align-center">
-                  <h1 class="flex my-4 primary--text">
-                    干部休假登记审核系统
-                  </h1>
+                  <h1 class="flex my-4 primary--text">干部休假登记审核系统</h1>
                 </div>
                 <v-form>
                   <v-text-field
                     append-icon="person"
-                    name="username"
                     label="账号"
+                    name="username"
                     type="text"
                     v-model="model.UserName"
                   ></v-text-field>
                   <v-text-field
                     append-icon="lock"
-                    name="password"
                     label="密码"
+                    name="password"
                     type="password"
                     v-model="model.Password"
                   ></v-text-field>
                   <v-input>
                     <SliderVerify
                       :duration="2000"
-                      sliderText="验证通过将自动登录"
-                      fg="img/verify/verify-ft.png"
-                      bg="img/verify/verify-bg.png"
                       @verify="verify"
+                      bg="img/verify/verify-bg.jpg"
+                      fg="img/verify/verify-ft.jpg"
+                      sliderText="验证通过将自动登录"
                     />
                   </v-input>
                 </v-form>
               </v-card-text>
               <v-card-actions>
-                <v-btn block color="primary" @click="login" :loading="loading"
-                  >登录</v-btn
-                >
+                <v-btn
+                  :loading="loading"
+                  @click="login"
+                  block
+                  color="primary"
+                >登录</v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -49,9 +64,11 @@
     </v-content>
     <v-snackbar v-model="snack.show">
       {{ snack.msg }}
-      <v-btn flat color="primary" @click.native="snack.show = false"
-        >关闭</v-btn
-      >
+      <v-btn
+        @click.native="snack.show = false"
+        color="primary"
+        flat
+      >关闭</v-btn>
     </v-snackbar>
   </v-app>
 </template>
@@ -59,7 +76,6 @@
 <script>
 import SliderVerify from "../components/plugin/SliderVerify/index.vue";
 import account from "../api/account";
-import users from "../api/users";
 
 export default {
   components: {

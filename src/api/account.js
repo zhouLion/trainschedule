@@ -5,18 +5,6 @@ let Get = request.get
 
 export default {
   /**
-   * 登录
-   * @param {*} params 
-   */
-  login({ UserName, Password, VerifyCode }) {
-    return Post("account/login", {
-      UserName,
-      Password,
-      VerifyCode
-    })
-  },
-
-  /**
     ### 登录
     | 字段名     | 类型   | 描述               |
     | ---------- | ------ | ------------------|
@@ -26,7 +14,13 @@ export default {
    * @param {{ UserName:string, Password:string, Verify:string }} param0 
    */
   loginRest({ UserName, Password, Verify }) {
-    return Post("account/login/rest", { UserName, Password, Verify })
+    return Post("account/login", {
+      username: UserName,
+      password: Password,
+      verify: {
+        code: Verify
+      }
+    })
   },
 
   /**
